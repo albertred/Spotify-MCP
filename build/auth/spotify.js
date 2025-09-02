@@ -1,9 +1,12 @@
 import express from 'express';
 import querystring from 'querystring';
 import SpotifyWebApi from 'spotify-web-api-node';
+import fs from 'fs';
+import path from 'path';
 import { CLIENTID, CLIENTSECRET, REDIRECTURI } from './index.js';
 const app = express();
-const PORT = 3000;
+const PORT = 8888;
+const TOKEN_FILE = path.join(process.cwd(), 'data', 'tokens.json');
 const spotifyApi = new SpotifyWebApi({
     clientId: CLIENTID,
     clientSecret: CLIENTSECRET,
@@ -19,7 +22,10 @@ app.get('/login', (_req, res) => {
         'playlist-modify-public',
         'playlist-modify-private',
         'user-read-playback-state',
-        'user-modify-playback-state'
+        'user-modify-playback-state',
+        'user-read-currently-playing',
+        'user-top-read',
+        'streaming'
     ];
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
@@ -41,9 +47,9 @@ app.get('/callback', async (req, res) => {
         const refreshToken = data.body['refresh_token'];
         spotifyApi.setAccessToken(accessToken);
         spotifyApi.setRefreshToken(refreshToken);
-        // Store tokens securely (you might want to use a database or file)
-        console.log('Access token:', accessToken);
-        console.log('Refresh token:', refreshToken);
+        // Store tokens securely
+        await storeTokens(accessToken, refreshToken);
+        console.log('Tokens stored successfully!');
         res.send('Authentication successful! You can now use the Spotify MCP tools.');
     }
     catch (error) {
@@ -53,10 +59,49 @@ app.get('/callback', async (req, res) => {
 });
 export function startAuthServer() {
     app.listen(PORT, () => {
-        console.log(`Spotify auth server running on http://localhost:${PORT}`);
-        console.log(`Visit http://localhost:${PORT}/login to authenticate`);
+        console.log(`Spotify auth server running on http://127.0.0.1:${PORT}`);
+        console.log(`Visit http://127.0.0.1:${PORT}/login to authenticate`);
     });
 }
+async function storeTokens(accessToken, refreshToken) {
+    const tokens = {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        timestamp: Date.now()
+    };
+    // Ensure data directory exists
+    const dataDir = path.dirname(TOKEN_FILE);
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(TOKEN_FILE, JSON.stringify(tokens, null, 2));
+}
+export function loadStoredTokens() {
+    try {
+        if (!fs.existsSync(TOKEN_FILE)) {
+            return null;
+        }
+        const data = fs.readFileSync(TOKEN_FILE, 'utf8');
+        const tokens = JSON.parse(data);
+        return {
+            accessToken: tokens.access_token,
+            refreshToken: tokens.refresh_token
+        };
+    }
+    catch (error) {
+        console.error('Error loading stored tokens:', error);
+        return null;
+    }
+}
 export function getSpotifyApi() {
+    return spotifyApi;
+}
+export function getAuthenticatedSpotifyApi() {
+    const tokens = loadStoredTokens();
+    if (!tokens) {
+        return null;
+    }
+    spotifyApi.setAccessToken(tokens.accessToken);
+    spotifyApi.setRefreshToken(tokens.refreshToken);
     return spotifyApi;
 }

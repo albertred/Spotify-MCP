@@ -19,7 +19,7 @@ async function main() {
     // Open login page in browser automatically
     const open = await import('open');
     setTimeout(() => {
-        open.default('http://localhost:3000/login');
+        open.default('http://127.0.0.1:8888/login');
     }, 1000);
     const transport = new StdioServerTransport();
     // Connect the server logic to the transport layer

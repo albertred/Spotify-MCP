@@ -3,7 +3,7 @@ import SpotifyWebApi from 'spotify-web-api-node';
 dotenv.config();
 export const CLIENTID = process.env.CLIENTID;
 export const CLIENTSECRET = process.env.CLIENTSECRET;
-export const REDIRECTURI = process.env.REDIRECTURI || 'http://localhost:3000/callback';
+export const REDIRECTURI = process.env.REDIRECTURI;
 export function setupSpotifyAuth() {
     if (!CLIENTID || !CLIENTSECRET) {
         throw new Error("Spotify authentication failed: CLIENTID and CLIENTSECRET environment variables are required");
