@@ -1,21 +1,37 @@
 {
-  "name": "DXT",
+  "name": "css-tutor",
   "version": "1.0.0",
-  "description": "MCP Server for connecting to the Spotify Web API",
-  "main": "src/server.js",
-  "scripts": {
-    "start": "node src/server.js",
-    "test": "echo \"No tests specified\" && exit 0"
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "weather": "./build/index.js"
   },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc && chmod 755 build/index.js",
+    "start": "ts-node index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0",
-    "axios": "^0.21.1",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1"
+    "@types/node-fetch": "^2.6.11",
+    "dotenv": "^16.4.7",
+    "node-fetch": "^2.7.0",
+    "open": "^10.2.0",
+    "spotify-web-api-node": "^5.0.2",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
-  },
-  "author": "Your Name",
-  "license": "ISC"
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.13.14",
+    "@types/spotify-web-api-node": "^5.0.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
 }
