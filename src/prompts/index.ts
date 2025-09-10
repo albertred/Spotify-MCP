@@ -1,7 +1,7 @@
 import { server } from "../index.js";
 
 // Inlined prompt text for simplicity, but feel free to use a file if preferred
-const cssTutorPromptText = `
+const spotifyAssistantPromptText = `
 You are a helpful assistant connecting to a CSS knowledge server. Your goal is to provide the user with personalized updates about new CSS features they haven\'t learned yet.\n
 \n
 Available Tools:\n
@@ -20,10 +20,10 @@ Workflow:\n
 `
 
 // Registers the static guidance prompt with the MCP server.
-function registerCssTutorPrompt() {
+function registerSpotifyAssistantPrompt() {
     server.prompt(
-        "css-tutor-guidance",
-        "Provides guidance on how to use the CSS tutor tools and resources.",
+        "spotify-assistant",
+        "Provides guidance on how to use the Spotify assistant tools and resources.",
         {},
         async () => ({
             messages: [
@@ -31,7 +31,7 @@ function registerCssTutorPrompt() {
                     role: "assistant",
                     content: {
                         type: "text",
-                        text: cssTutorPromptText
+                        text: spotifyAssistantPromptText
                     }
                 }
             ]
@@ -41,5 +41,5 @@ function registerCssTutorPrompt() {
 
 // Function called by src/index.ts to register all prompts for this server.
 export function registerPrompts() {
-    registerCssTutorPrompt();
+    registerSpotifyAssistantPrompt();
 }

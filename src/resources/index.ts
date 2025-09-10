@@ -80,7 +80,6 @@ function registerCssKnowledgeMemoryResource() {
     );
 }
 
-// Function called by src/index.ts to register all resources for this server.
 export function registerResources() {
     registerCssKnowledgeMemoryResource();
 }
